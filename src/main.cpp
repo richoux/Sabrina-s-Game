@@ -23,6 +23,12 @@ int main( int argc, char **argv )
 			xp = 1;
 	}
 
+	if( w % 2 == 1 && h % 2 == 1 )
+	{
+		std::cout << "Width and height cannot be both odd.\n";
+		return EXIT_FAILURE;
+	}
+	
 	int number_solutions = compute_combinatorics(w,h);
 	std::cout << "Number of valid solutions for a (" << w << "x" << h << ") rectangle: " << number_solutions << "\n";
 		
