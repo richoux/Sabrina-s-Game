@@ -45,6 +45,8 @@ void Solution::init_grid()
 		for( int col = 1 ; col < _width - 1 ; ++col )
 			_grid[row][col] = 4;
 
+	_built_solution.clear();
+	
 	_count[0] = 0;
 	_count[1] = 0;
 	_count[2] = 4;

@@ -6,36 +6,41 @@
 
 int main( int argc, char **argv )
 {
-	int w,h;
+	int w,h,xp;
 
-	if( argc != 3 )
+	if( argc < 3 || argc > 4 )
 	{
-		std::cout << "Usage: " << argv[0] << " width height\n";
+		std::cout << "Usage: " << argv[0] << " width height [#xp_runs]\n";
 		return EXIT_FAILURE;
 	}
 	else
 	{
 		w = std::stoi( argv[1] );
 		h = std::stoi( argv[2] );
+		if( argc == 4 )
+			xp = std::stoi( argv[3] );
+		else
+			xp = 1;
 	}
 
 	sabrinasgame::Solution solution( w, h );
-	auto raw_sol = solution.build();
-
-	std::cout << "Solution: ";
-	for( auto &pair_of_index: raw_sol )
-	{
-		auto c1 = index_to_coord(pair_of_index.first, w);
-		auto c2 = index_to_coord(pair_of_index.second, w);
-
-		if( c1.first > c2.first || c1.second > c2.second)
-			std::swap( c1, c2 );
-		
-		std::cout << "[(" << c1.first << "," << c1.second << ") (" << c2.first << "," << c2.second << ")] ; ";
-	}
-	std::cout << "\n";
+	std::vector< std::pair<int,int> > result;
 	
-	solution.print();
+	if( xp == 1 )
+	{
+		result = solution.build();
+		display_solution( result, w );
+		solution.print();
+	}
+	else
+	{
+		for( int run = 1 ; run <= xp ; ++run )
+		{
+			std::cout << "Run #" << run << "\n";
+			result = solution.build();
+			display_solution_short( result );
+		}
+	}
 	
 	return EXIT_SUCCESS;
 }
