@@ -186,7 +186,7 @@ void Solution::greedy_fill( int index )
 	{
 		fill( row, col );
 		fill( row, col - 1 );
-		std::cout << "W-Filling ([" << row << "][" << col -1<< "]), ([" << row << "][" << col << "])\n";
+		//std::cout << "W-Filling ([" << row << "][" << col -1<< "]), ([" << row << "][" << col << "])\n";
 		decrease_around( row, col - 1, row, col );
 		_built_solution.emplace_back( coordinates_to_index( row, col - 1 ), coordinates_to_index( row, col ) );
 		return;
@@ -195,7 +195,7 @@ void Solution::greedy_fill( int index )
 	{
 		fill( row, col );
 		fill( row - 1, col );
-		std::cout << "N-Filling ([" << row -1<< "][" << col << "]), ([" << row << "][" << col << "])\n";
+		//std::cout << "N-Filling ([" << row -1<< "][" << col << "]), ([" << row << "][" << col << "])\n";
 		decrease_around( row - 1, col, row, col );
 		_built_solution.emplace_back( coordinates_to_index( row - 1, col ), coordinates_to_index( row, col ) );
 		return;
@@ -204,7 +204,7 @@ void Solution::greedy_fill( int index )
 	{
 		fill( row, col );
 		fill( row, col + 1 );
-		std::cout << "E-Filling ([" << row << "][" << col << "]), ([" << row << "][" << col+1 << "])\n";
+		//std::cout << "E-Filling ([" << row << "][" << col << "]), ([" << row << "][" << col+1 << "])\n";
 		decrease_around( row, col, row, col + 1 );
 		_built_solution.emplace_back( coordinates_to_index( row, col ), coordinates_to_index( row, col + 1 ) );
 		return;
@@ -213,7 +213,7 @@ void Solution::greedy_fill( int index )
 	{
 		fill( row, col );
 		fill( row + 1, col );
-		std::cout << "S-Filling ([" << row << "][" << col << "]), ([" << row+1 << "][" << col << "])\n";
+		//std::cout << "S-Filling ([" << row << "][" << col << "]), ([" << row+1 << "][" << col << "])\n";
 		decrease_around( row, col, row + 1, col );
 		_built_solution.emplace_back( coordinates_to_index( row, col ), coordinates_to_index( row + 1, col ) );
 	}
@@ -221,7 +221,7 @@ void Solution::greedy_fill( int index )
 
 void Solution::force_move( int r1, int c1, int r2, int c2 )
 {
-	std::cout << "Force " << r1 << ","<< c1 << " " << r2 << ","<< c2 << "\n";				
+	//std::cout << "Force " << r1 << ","<< c1 << " " << r2 << ","<< c2 << "\n";				
 	fill( r1, c1 );
 	fill( r2, c2 );
 	_built_solution.emplace_back( coordinates_to_index( r1, c1 ), coordinates_to_index( r2, c2 ) );
@@ -229,6 +229,8 @@ void Solution::force_move( int r1, int c1, int r2, int c2 )
 		decrease( r1, c1 - 1 );
 	if( _grid[r2][c2+1] != -1 )
 		decrease( r2, c2 + 1 );
+	if( _grid[r1-1][c1] != -1 )
+		decrease( r1 - 1, c1 );
 	if( _grid[r2-1][c2] != -1 )
 		decrease( r2 - 1, c2 );
 }
@@ -252,14 +254,14 @@ std::vector< std::pair<int,int> > Solution::build()
 	{
 		for( int col = 0 ; col < _width ; ++col )
 		{
-			std::cout << "Looking at _grid[" << row << "]["<< col<< "]\n";				
+			//std::cout << "Looking at _grid[" << row << "]["<< col<< "]\n";				
 			if( _grid[row][col] != -1 )
 			{
-				std::cout << "Unfilled cell\n";
+				//std::cout << "Unfilled cell\n";
 				fill( row, col );
 				if( toss_coin() ) //horizontal tuple
 				{
-					std::cout << "Horizontal\n";
+					//std::cout << "Horizontal\n";
 					fill( row, col + 1 );
 					_built_solution.emplace_back( coordinates_to_index( row, col ), coordinates_to_index( row, col + 1 ) );
 					
@@ -275,7 +277,7 @@ std::vector< std::pair<int,int> > Solution::build()
 				}
 				else //vertical tuple
 				{
-					std::cout << "Vertical _grid[" << row+1 << "][" << col << "]=" << _grid[row+1][col] << "\n";
+					//std::cout << "Vertical _grid[" << row+1 << "][" << col << "]=" << _grid[row+1][col] << "\n";
 					fill( row + 1, col );
 					_built_solution.emplace_back( coordinates_to_index( row, col ), coordinates_to_index( row + 1, col ) );
 
