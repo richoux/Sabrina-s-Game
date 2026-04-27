@@ -11,14 +11,14 @@ For getting one solution and display it with a pretty ASCII drawing: `$> bin/sab
 
 Example:
 ```shell
-$> bin/sabrinasgame 4 6
+./bin/sabrinasgame 4 6
 ```
 
 For running it multiple times and getting a simple solution display: `$> bin/sabrinasgame WIDTH HEIGHT RUNS`
 
 Example for 10 runs:
 ```shell
-$> bin/sabrinasgame 4 6 10
+./bin/sabrinasgame 4 6 10
 ```
 
 ## Known issues
