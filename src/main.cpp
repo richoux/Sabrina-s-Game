@@ -29,7 +29,7 @@ int main( int argc, char **argv )
 		return EXIT_FAILURE;
 	}
 	
-	int number_solutions = compute_combinatorics(w,h);
+	long long number_solutions = compute_combinatorics(w,h);
 	std::cout << "Number of valid solutions for a (" << w << "x" << h << ") rectangle: " << number_solutions << "\n";
 		
 	sabrinasgame::Solution solution( w, h );

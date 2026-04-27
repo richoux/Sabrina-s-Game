@@ -320,24 +320,6 @@ void Solution::print() const
 					else
 						done[j][i] = 3;
 				break;
-			// case -2: // second vertical
-			// 	if( i == _width - 1 )
-			// 		if( j == _height - 1 )
-			// 			done[j][i] = 10;
-			// 		else
-			// 			done[j][i] = 8;
-			// 	else
-			// 		if( done[j][i+1] == -1 ) // first vertical
-			// 			done[j][i] = 7;
-			// 		else
-			// 			if( j == _height - 1 )
-			// 				done[j][i] = 9;
-			// 			else
-			// 				if( done[j+1][i] == -3 ) // first horizontal
-			// 					done[j][i] = 6;
-			// 				else
-			// 					done[j][i] = 5;
-			// 	break;
 			case -3: // first horizontal
 				if( j == _height - 1 )
 					done[j][i] = 11;
@@ -367,14 +349,6 @@ void Solution::print() const
 				break;				
 			}
 		}
-	
-	// std::cout << "\n\n";
-	// for(int r = 0 ; r < _height ; ++r )
-	// {
-	// 	for( int c = 0 ; c < _width  ; ++c )
-	// 		std::cout << done[r][c] << " ";
-	// 	std::cout << "\n";
-	// }
 	
 	std::cout << "\n┌";
 	for( int i = 0 ; i < _width - 1 ; ++i )

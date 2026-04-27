@@ -35,11 +35,11 @@ void display_solution_short( const std::vector< std::pair<int,int> >& solution )
 	std::cout << "\n";
 }
 
-int compute_combinatorics( int width, int height )
+long long compute_combinatorics( int width, int height )
 {
 	// see https://en.wikipedia.org/wiki/Domino_tiling#Counting_tilings_of_regions
 	double tmp1, tmp2;
-	double total = 1.;
+	long double total = 1.;
 	for( int w = 1 ; w <= width/2 ; ++w )
 	{
 		tmp1 = std::cos(w*std::numbers::pi / (width+1));
@@ -50,5 +50,5 @@ int compute_combinatorics( int width, int height )
 		}
 	}
 
-	return static_cast<int>( total );
+	return static_cast<long long>( total );
 }
