@@ -25,6 +25,8 @@ namespace sabrinasgame
 		void decrease( int row, int col );
 		void greedy_fill( int index );
 		void decrease_around( int row1, int col1, int row2, int col2 );
+		bool left_scan_is_even( int col ) const;
+		void force_move( int row1, int col1, int row2, int col2 );
 		
 	public:
 		Solution( int width, int height );

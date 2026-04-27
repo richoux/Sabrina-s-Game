@@ -91,7 +91,8 @@ void Solution::decrease_around( int row1, int col1, int row2, int col2 )
 	//std::cout << row1 << "," << col1 << " " << row2 << "," << col2 << "\n";
 
 	bool is_vertical = ( col1 == col2 );
-
+	bool trigger_forced_move = false;
+	
 	//std::cout << "is_vertical=" << is_vertical << "\n";
 
 	if( col1 - 1 >= 0 && _grid[row1][col1 - 1] > 0 )
@@ -116,6 +117,8 @@ void Solution::decrease_around( int row1, int col1, int row2, int col2 )
 	{
 		//std::cout << "_grid["<< row2+1 << "]["<< col2 << "]="<< _grid[row2+1][col2] << "\n";
 		decrease( row2 + 1, col2);
+		if( is_vertical && row2 == _height - 2 && col2 > 1 && col2 < _width - 2 )
+			trigger_forced_move = true;
 		//std::cout << "S\n";
 	}
 
@@ -154,6 +157,14 @@ void Solution::decrease_around( int row1, int col1, int row2, int col2 )
 		//std::cout << "Horizontal decrease_around\n";
 	}
 
+	if( trigger_forced_move )
+	{
+		if( left_scan_is_even( col2 ) )
+			force_move( row2 + 1, col2, row2 + 1, col2 + 1 );
+		else
+			force_move( row2 + 1, col2 - 1, row2 + 1, col2 );
+	}
+	
 	//std::cout << "End decrease_around\n";
 }
 
@@ -175,7 +186,7 @@ void Solution::greedy_fill( int index )
 	{
 		fill( row, col );
 		fill( row, col - 1 );
-		//std::cout << "W-Filling ([" << row << "][" << col -1<< "]), ([" << row << "][" << col << "])\n";
+		std::cout << "W-Filling ([" << row << "][" << col -1<< "]), ([" << row << "][" << col << "])\n";
 		decrease_around( row, col - 1, row, col );
 		_built_solution.emplace_back( coordinates_to_index( row, col - 1 ), coordinates_to_index( row, col ) );
 		return;
@@ -184,7 +195,7 @@ void Solution::greedy_fill( int index )
 	{
 		fill( row, col );
 		fill( row - 1, col );
-		//std::cout << "N-Filling ([" << row -1<< "][" << col << "]), ([" << row << "][" << col << "])\n";
+		std::cout << "N-Filling ([" << row -1<< "][" << col << "]), ([" << row << "][" << col << "])\n";
 		decrease_around( row - 1, col, row, col );
 		_built_solution.emplace_back( coordinates_to_index( row - 1, col ), coordinates_to_index( row, col ) );
 		return;
@@ -193,7 +204,7 @@ void Solution::greedy_fill( int index )
 	{
 		fill( row, col );
 		fill( row, col + 1 );
-		//std::cout << "E-Filling ([" << row << "][" << col << "]), ([" << row << "][" << col+1 << "])\n";
+		std::cout << "E-Filling ([" << row << "][" << col << "]), ([" << row << "][" << col+1 << "])\n";
 		decrease_around( row, col, row, col + 1 );
 		_built_solution.emplace_back( coordinates_to_index( row, col ), coordinates_to_index( row, col + 1 ) );
 		return;
@@ -202,10 +213,35 @@ void Solution::greedy_fill( int index )
 	{
 		fill( row, col );
 		fill( row + 1, col );
-		//std::cout << "S-Filling ([" << row << "][" << col << "]), ([" << row+1 << "][" << col << "])\n";
+		std::cout << "S-Filling ([" << row << "][" << col << "]), ([" << row+1 << "][" << col << "])\n";
 		decrease_around( row, col, row + 1, col );
 		_built_solution.emplace_back( coordinates_to_index( row, col ), coordinates_to_index( row + 1, col ) );
 	}
+}
+
+void Solution::force_move( int r1, int c1, int r2, int c2 )
+{
+	std::cout << "Force " << r1 << ","<< c1 << " " << r2 << ","<< c2 << "\n";				
+	fill( r1, c1 );
+	fill( r2, c2 );
+	_built_solution.emplace_back( coordinates_to_index( r1, c1 ), coordinates_to_index( r2, c2 ) );
+	if( _grid[r1][c1-1] != -1 )
+		decrease( r1, c1 - 1 );
+	if( _grid[r2][c2+1] != -1 )
+		decrease( r2, c2 + 1 );
+	if( _grid[r2-1][c2] != -1 )
+		decrease( r2 - 1, c2 );
+}
+
+bool Solution::left_scan_is_even( int col ) const
+{
+	int filled = 0;
+	for( int r = 0 ; r < _height ; ++r )
+		for( int c = 0 ; c < col ; ++c )
+			if( _grid[r][c] != -1 )
+				++filled;
+
+	return filled % 2 == 0;
 }
 
 std::vector< std::pair<int,int> > Solution::build()
@@ -216,14 +252,14 @@ std::vector< std::pair<int,int> > Solution::build()
 	{
 		for( int col = 0 ; col < _width ; ++col )
 		{
-			//std::cout << "Looking at _grid[" << row << "]["<< col<< "]\n";				
+			std::cout << "Looking at _grid[" << row << "]["<< col<< "]\n";				
 			if( _grid[row][col] != -1 )
 			{
-				//std::cout << "Unfilled cell\n";
+				std::cout << "Unfilled cell\n";
 				fill( row, col );
 				if( toss_coin() ) //horizontal tuple
 				{
-					//std::cout << "Horizontal\n";
+					std::cout << "Horizontal\n";
 					fill( row, col + 1 );
 					_built_solution.emplace_back( coordinates_to_index( row, col ), coordinates_to_index( row, col + 1 ) );
 					
@@ -239,7 +275,7 @@ std::vector< std::pair<int,int> > Solution::build()
 				}
 				else //vertical tuple
 				{
-					//std::cout << "Vertical _grid[" << row+1 << "][" << col << "]=" << _grid[row+1][col] << "\n";
+					std::cout << "Vertical _grid[" << row+1 << "][" << col << "]=" << _grid[row+1][col] << "\n";
 					fill( row + 1, col );
 					_built_solution.emplace_back( coordinates_to_index( row, col ), coordinates_to_index( row + 1, col ) );
 
@@ -254,6 +290,13 @@ std::vector< std::pair<int,int> > Solution::build()
 					}
 					if( col - 1 >= 0 && _grid[row+1][col-1] != -1 )
 						decrease( row + 1, col - 1 );
+					if( row == _height - 3 && _grid[row+2][col] != -1 && col > 1 && col < _width - 2 )
+					{
+						if( left_scan_is_even( col ) )
+							force_move( row + 2, col, row + 2, col + 1 );
+						else
+							force_move( row + 2, col - 1, row + 2, col );
+					}
 				}
 				// for( int a = 0 ; a <= 4 ; ++a )
 				// 	std::cout << "_count[" << a << "]=" << _count[a] << "\n";
