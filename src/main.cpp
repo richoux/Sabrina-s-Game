@@ -38,18 +38,39 @@ int main( int argc, char **argv )
 	if( xp == 1 )
 	{
 		result = solution.build();
-		display_solution( result, w );
-		solution.print();
+		if( solution.is_valid() )
+		{
+			display_solution( result, w );
+			solution.print();
+		}
+		else
+		{
+			std::cout << "Invalid (and incomplete) solution: ";
+			display_solution( result, w );
+		}
 	}
 	else
 	{
+		int number_invalid = 0;
+		
 		for( int run = 1 ; run <= xp ; ++run )
 		{
-			std::cout << "Run #" << run << ": ";
+			std::cout << "Run #" << run << " | ";
 			result = solution.build();
-			auto norm_sol = get_normalized_solution( result, w );
-			std::cout << norm_sol.str();
+			if( solution.is_valid() )
+			{
+				std::cout << "1 | ";
+				auto norm_sol = get_normalized_solution( result, w );
+				std::cout << norm_sol.str();
+			}
+			else
+			{
+				std::cout << "0 | ";
+				++number_invalid;
+			}
 		}
+
+		std::cout << "Number invalid | " << number_invalid << "\n";
 	}
 	
 	return EXIT_SUCCESS;
