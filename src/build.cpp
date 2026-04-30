@@ -186,7 +186,7 @@ bool Solution::greedy_fill( int index )
 
 	int row = coord.first;
 	int col = coord.second;
-	int no_errors = true;
+	bool no_errors = true;
 	
 	if( col - 1 >= 0 && _grid[row][col - 1] > 0 ) // West
 	{
