@@ -45,9 +45,10 @@ int main( int argc, char **argv )
 	{
 		for( int run = 1 ; run <= xp ; ++run )
 		{
-			std::cout << "Run #" << run << "\n";
+			std::cout << "Run #" << run << ": ";
 			result = solution.build();
-			display_solution_short( result );
+			auto norm_sol = get_normalized_solution( result, w );
+			std::cout << norm_sol.str();
 		}
 	}
 	
