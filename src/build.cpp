@@ -58,22 +58,28 @@ void Solution::init_grid()
 
 bool Solution::fill( int row, int col )
 {
-	//std::cout << "Filling (" << row << "," << col << ") " << _grid[row][col] << "\n";
-	//assert(_grid[row][col] != -1);
+#if defined DEBUG
+	std::cout << "Filling (" << row << "," << col << ") " << _grid[row][col] << "\n";
+	assert(_grid[row][col] != -1);
+#endif
 	if( _grid[row][col] == -1 )
 		return false;
 	
 	--_count[_grid[row][col]];
 	_grid[row][col] = -1;
 	
-	//assert(_count[0] == 0);
+#if defined DEBUG
+	assert(_count[0] == 0);
+#endif
 	return _count[0] == 0;
 }
 
 bool Solution::decrease( int row, int col )
 {
-	//std::cout << "Decreasing (" << row << "," << col << ") " << _grid[row][col] << "\n";
-	//assert(_grid[row][col] != -1);
+#if defined DEBUG
+	std::cout << "Decreasing (" << row << "," << col << ") " << _grid[row][col] << "\n";
+	assert(_grid[row][col] != -1);
+#endif
 	if( _grid[row][col] == -1 )
 		return false;
 
@@ -81,97 +87,148 @@ bool Solution::decrease( int row, int col )
 	--_grid[row][col];
 	++_count[_grid[row][col]];
 
-	//assert(_count[0] == 0);
-	//std::cout << "_grid[2][0]=" << _grid[2][0] << ")\n";
+#if defined DEBUG
+	assert(_count[0] == 0);
+	std::cout << "new value (" << row << "," << col << ") " << _grid[row][col] << "\n";
+#endif
 	return _count[0] == 0;
 }
 
 bool Solution::decrease_around( int row1, int col1, int row2, int col2 )
 {
-	//std::cout << "Begin decrease_around\n";
-
+#if defined DEBUG
+	std::cout << "Begin decrease_around\n";
+#endif
+	
 	if( row1 > row2 )
 		std::swap( row1, row2 );
 	if( col1 > col2 )
 		std::swap( col1, col2 );
 
-	//std::cout << row1 << "," << col1 << " " << row2 << "," << col2 << "\n";
-
-	bool is_vertical = ( col1 == col2 );
-	bool trigger_forced_move = false;
+#if defined DEBUG
+	std::cout << row1 << "," << col1 << " " << row2 << "," << col2 << "\n";
+#endif
 	
-	//std::cout << "is_vertical=" << is_vertical << "\n";
-
+	bool is_vertical = ( col1 == col2 );
+#if defined V2
+	bool trigger_forced_move = false;
+#endif
+	
+#if defined DEBUG
+	std::cout << "is_vertical=" << is_vertical << "\n";
+#endif
+	
 	if( col1 - 1 >= 0 && _grid[row1][col1 - 1] > 0 )
 	{
-		//std::cout << "_grid["<< row1 << "]["<< col1 - 1 << "]="<< _grid[row1][col1 - 1] << "\n";
+#if defined DEBUG
+		std::cout << "_grid["<< row1 << "]["<< col1 - 1 << "]="<< _grid[row1][col1 - 1] << "\n";
+#endif
 		if( !decrease( row1, col1 - 1 ) )
 			return false;
-		//std::cout << "W\n";
+#if defined DEBUG
+		std::cout << "W\n";
+#endif
 	}
 	if( col2 + 1 < _width && _grid[row2][col2 + 1] > 0 )
 	{
-		//std::cout << "_grid["<< row2 << "]["<< col2+1 << "]="<< _grid[row2][col2+1] << "\n";
+#if defined DEBUG
+		std::cout << "_grid["<< row2 << "]["<< col2+1 << "]="<< _grid[row2][col2+1] << "\n";
+#endif
 		if( !decrease( row2, col2 + 1 ) )
 			return false;
-		//std::cout << "E\n";
+#if defined DEBUG
+		std::cout << "E\n";
+#endif
 	}
 	if( row1 - 1 >= 0 && _grid[row1 - 1][col1] > 0 )
 	{
-		//std::cout << "_grid["<< row1-1 << "]["<< col1 << "]="<< _grid[row1-1][col1] << "\n";
+#if defined DEBUG
+		std::cout << "_grid["<< row1-1 << "]["<< col1 << "]="<< _grid[row1-1][col1] << "\n";
+#endif
 		if( !decrease( row1 - 1, col1 ) )
 			return false;
-		//std::cout << "N\n";
+#if defined DEBUG
+		std::cout << "N\n";
+#endif
 	}
 	if( row2 + 1 < _height && _grid[row2 + 1][col2] > 0 )
 	{
-		//std::cout << "_grid["<< row2+1 << "]["<< col2 << "]="<< _grid[row2+1][col2] << "\n";
+#if defined DEBUG
+		std::cout << "_grid["<< row2+1 << "]["<< col2 << "]="<< _grid[row2+1][col2] << "\n";
+#endif
 		if( !decrease( row2 + 1, col2) )
 			return false;
+#if defined V2
 		if( is_vertical && row2 == _height - 2 && col2 > 1 && col2 < _width - 2 )
 			trigger_forced_move = true;
-		//std::cout << "S\n";
+#if defined DEBUG
+		std::cout << "S\n";
+#endif
+#endif
 	}
 
-	//std::cout << "Common decrease_around\n";
+#if defined DEBUG
+	std::cout << "Common decrease_around\n";
+#endif
 
 	if( is_vertical )
 	{
 		if( col2 - 1 >= 0 && _grid[row2][col2 - 1] > 0 )
 		{
-			//std::cout << "_grid["<< row2 << "]["<< col2-1 << "]="<< _grid[row2][col2-1] << "\n";
+#if defined DEBUG
+			std::cout << "_grid["<< row2 << "]["<< col2-1 << "]="<< _grid[row2][col2-1] << "\n";
+#endif
 			if( !decrease( row2, col2 - 1 ) )
 				return false;
-			//std::cout << "SW\n";
+#if defined DEBUG
+			std::cout << "SW\n";
+#endif
 		}
 		if( col1 + 1 < _width && _grid[row1][col1 + 1] > 0 )
 		{
-			//std::cout << "_grid["<< row1 << "]["<< col1+1 << "]="<< _grid[row1][col1+1] << "\n";
+#if defined DEBUG
+			std::cout << "_grid["<< row1 << "]["<< col1+1 << "]="<< _grid[row1][col1+1] << "\n";
+#endif
 			if( !decrease( row1, col1 + 1 ) )
 				return false;
-			//std::cout << "NE\n";
+#if defined DEBUG
+			std::cout << "NE\n";
+#endif
 		}
-		//std::cout << "Vertical decrease_around\n";
+#if defined DEBUG
+		std::cout << "Vertical decrease_around\n";
+#endif
 	}
 	else // horizontal
 	{
 		if( row2 - 1 >= 0 && _grid[row2 - 1][col2] > 0 )
 		{
-			//std::cout << "decrease _grid["<< row2-1 << "]["<< col2 << "]="<< _grid[row2-1][col2] << "\n";
+#if defined DEBUG
+			std::cout << "decrease _grid["<< row2-1 << "]["<< col2 << "]="<< _grid[row2-1][col2] << "\n";
+#endif
 			if( !decrease( row2 - 1, col2 ) )
 				return false;
-			//std::cout << "NE\n";
+#if defined DEBUG
+			std::cout << "NE\n";
+#endif
 		}
 		if( row1 + 1 < _height && _grid[row1 + 1][col1] > 0 )
 		{
-			//std::cout << "_grid["<< row1+1 << "]["<< col1 << "]="<< _grid[row1+1][col1] << "\n";
+#if defined DEBUG
+			std::cout << "_grid["<< row1+1 << "]["<< col1 << "]="<< _grid[row1+1][col1] << "\n";
+#endif
 			if( !decrease( row1 + 1, col1) )
 				return false;
-			//std::cout << "SW\n";
+#if defined DEBUG
+			std::cout << "SW\n";
+#endif
 		}
-		//std::cout << "Horizontal decrease_around\n";
+#if defined DEBUG
+		std::cout << "Horizontal decrease_around\n";
+#endif
 	}
 
+#if defined V2
 	if( trigger_forced_move )
 	{
 		if( left_scan_is_even( col2 ) )
@@ -179,8 +236,11 @@ bool Solution::decrease_around( int row1, int col1, int row2, int col2 )
 		else
 			force_move( row2 + 1, col2 - 1, row2 + 1, col2 );
 	}
+#endif
 	
-	//std::cout << "End decrease_around\n";
+#if defined DEBUG
+	std::cout << "End decrease_around\n";
+#endif
 	return true;
 }
 
@@ -203,7 +263,9 @@ bool Solution::greedy_fill( int index )
 	{
 		no_errors = no_errors && fill( row, col );
 		no_errors = no_errors && fill( row, col - 1 );
-		//std::cout << "W-Filling ([" << row << "][" << col -1<< "]), ([" << row << "][" << col << "])\n";
+#if defined DEBUG
+		std::cout << "W-Filling ([" << row << "][" << col -1<< "]), ([" << row << "][" << col << "])\n";
+#endif
 		no_errors = no_errors && decrease_around( row, col - 1, row, col );
 
 		if( no_errors )
@@ -214,7 +276,9 @@ bool Solution::greedy_fill( int index )
 	{
 		no_errors = no_errors && fill( row, col );
 		no_errors = no_errors && fill( row - 1, col );
-		//std::cout << "N-Filling ([" << row -1<< "][" << col << "]), ([" << row << "][" << col << "])\n";
+#if defined DEBUG
+		std::cout << "N-Filling ([" << row -1<< "][" << col << "]), ([" << row << "][" << col << "])\n";
+#endif
 		no_errors = no_errors && decrease_around( row - 1, col, row, col );
 
 		if( no_errors )
@@ -225,7 +289,9 @@ bool Solution::greedy_fill( int index )
 	{
 		no_errors = no_errors && fill( row, col );
 		no_errors = no_errors && fill( row, col + 1 );
-		//std::cout << "E-Filling ([" << row << "][" << col << "]), ([" << row << "][" << col+1 << "])\n";
+#if defined DEBUG
+		std::cout << "E-Filling ([" << row << "][" << col << "]), ([" << row << "][" << col+1 << "])\n";
+#endif
 		no_errors = no_errors && decrease_around( row, col, row, col + 1 );
 
 		if( no_errors )
@@ -236,7 +302,9 @@ bool Solution::greedy_fill( int index )
 	{
 		no_errors = no_errors && fill( row, col );
 		no_errors = no_errors && fill( row + 1, col );
-		//std::cout << "S-Filling ([" << row << "][" << col << "]), ([" << row+1 << "][" << col << "])\n";
+#if defined DEBUG
+		std::cout << "S-Filling ([" << row << "][" << col << "]), ([" << row+1 << "][" << col << "])\n";
+#endif
 		no_errors = no_errors && decrease_around( row, col, row + 1, col );
 
 		if( no_errors )
@@ -245,9 +313,12 @@ bool Solution::greedy_fill( int index )
 	return no_errors;
 }
 
+#if defined V2
 bool Solution::force_move( int r1, int c1, int r2, int c2 )
 {
-	//std::cout << "Force " << r1 << ","<< c1 << " " << r2 << ","<< c2 << "\n";				
+#if defined DEBUG
+	std::cout << "Force " << r1 << ","<< c1 << " " << r2 << ","<< c2 << "\n";
+#endif
 	bool no_errors = true;
 	no_errors = no_errors && fill( r1, c1 );
 	no_errors = no_errors && fill( r2, c2 );
@@ -276,6 +347,7 @@ bool Solution::left_scan_is_even( int col ) const
 
 	return filled % 2 == 0;
 }
+#endif
 
 std::vector< std::pair<int,int> > Solution::build()
 {
@@ -285,16 +357,22 @@ std::vector< std::pair<int,int> > Solution::build()
 	{
 		for( int col = 0 ; col < _width ; ++col )
 		{
-			//std::cout << "Looking at _grid[" << row << "]["<< col<< "]\n";				
+#if defined DEBUG
+			std::cout << "Looking at _grid[" << row << "]["<< col<< "]\n";
+#endif
 			if( _grid[row][col] != -1 )
 			{
-				//std::cout << "Unfilled cell\n";
-				if (! fill( row, col ) )
+#if defined DEBUG
+				std::cout << "Unfilled cell\n";
+#endif
+				if( !fill( row, col ) )
 					return _built_solution;
 				
 				if( toss_coin() ) //horizontal tuple
 				{
-					//std::cout << "Horizontal\n";
+#if defined DEBUG
+					std::cout << "Horizontal\n";
+#endif
 					if( !fill( row, col + 1 ) )
 						return _built_solution;
 					_built_solution.emplace_back( coordinates_to_index( row, col ), coordinates_to_index( row, col + 1 ) );
@@ -314,7 +392,9 @@ std::vector< std::pair<int,int> > Solution::build()
 				}
 				else //vertical tuple
 				{
-					//std::cout << "Vertical _grid[" << row+1 << "][" << col << "]=" << _grid[row+1][col] << "\n";
+#if defined DEBUG
+					std::cout << "Vertical _grid[" << row+1 << "][" << col << "]=" << _grid[row+1][col] << "\n";
+#endif
 					if( !fill( row + 1, col ) )
 						return _built_solution;
 					_built_solution.emplace_back( coordinates_to_index( row, col ), coordinates_to_index( row + 1, col ) );
@@ -334,6 +414,7 @@ std::vector< std::pair<int,int> > Solution::build()
 					if( col - 1 >= 0 && _grid[row+1][col-1] != -1 )
 						if( !decrease( row + 1, col - 1 ) )
 							return _built_solution;
+#if defined V2
 					if( row == _height - 3 && _grid[row+2][col] != -1 && col > 1 && col < _width - 2 )
 					{
 						if( left_scan_is_even( col ) )
@@ -341,15 +422,20 @@ std::vector< std::pair<int,int> > Solution::build()
 						else
 							force_move( row + 2, col - 1, row + 2, col );
 					}
+#endif
 				}
-				// for( int a = 0 ; a <= 4 ; ++a )
-				// 	std::cout << "_count[" << a << "]=" << _count[a] << "\n";
+#if defined DEBUG
+				for( int a = 0 ; a <= 4 ; ++a )
+					std::cout << "_count[" << a << "]=" << _count[a] << "\n";
+#endif
 				while( _count[1] > 0 )
 				{
 					if( !greedy_fill( coordinates_to_index( row, col ) ) )
 						return _built_solution;
-					// for( int a = 0 ; a <= 4 ; ++a )
-					//  	std::cout << "_count[" << a << "]=" << _count[a] << "\n";
+#if defined DEBUG
+					for( int a = 0 ; a <= 4 ; ++a )
+					 	std::cout << "_count[" << a << "]=" << _count[a] << "\n";
+#endif
 				}
 			}
 		}
