@@ -28,6 +28,8 @@ int main( int argc, char **argv )
 		std::cout << "Width and height cannot be both odd.\n";
 		return EXIT_FAILURE;
 	}
+
+	bool printable_solution = ( w * h < 100 );
 	
 	long long number_solutions = compute_combinatorics(w,h);
 	std::cout << "Number of valid solutions for a (" << w << "x" << h << ") rectangle: " << number_solutions << "\n";
@@ -60,8 +62,13 @@ int main( int argc, char **argv )
 			if( solution.is_valid() )
 			{
 				std::cout << "1 | ";
-				auto norm_sol = get_normalized_solution( result, w );
-				std::cout << norm_sol.str();
+				if( printable_solution )
+				{
+					auto norm_sol = get_normalized_solution( result, w );
+					std::cout << norm_sol.str();
+				}
+				else
+					std::cout << "\n";
 			}
 			else
 			{
