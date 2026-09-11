@@ -1,9 +1,11 @@
 #pragma once
 
 #include <vector>
+#include <deque>
 #include <utility> //std::pair
-#include <random>
 #include <iostream>
+
+#include "../thirdparty/randutils.hpp"
 
 namespace sabrinasgame
 {
@@ -13,12 +15,13 @@ namespace sabrinasgame
 		int _height;
 		std::vector< std::vector<int> > _grid;
 		int _count[5];
+		std::deque<int> _list_count1;
+		std::deque<int> _list_count2;
+
 		std::vector< std::pair<int,int> > _built_solution;
 		bool _is_valid;
 		
-		std::random_device _rd;
-    std::mt19937 _gen;
-    std::uniform_int_distribution<> _distrib;
+		randutils::mt19937_rng _rng;
 
 		bool toss_coin();		
 		void init_grid();
@@ -28,7 +31,9 @@ namespace sabrinasgame
 		bool decrease_around( int row1, int col1, int row2, int col2 );
 		bool left_scan_is_even( int col ) const;
 		bool force_move( int row1, int col1, int row2, int col2 );
-		
+
+		inline bool is_free( int row, int col ) { return row >= 0 && row < _height && col >=0 && col < _width && _grid[row][col] > 0; }
+
 	public:
 		Solution( int width, int height );
 

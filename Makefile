@@ -17,7 +17,7 @@ endif
 
 # Directories
 SRCDIR=src
-HPPDIR=include
+HPPDIR=include 
 OBJDIR=obj
 BINDIR=bin
 
@@ -35,24 +35,40 @@ vpath %.o $(OBJDIR)
 
 # Rules
 
-all: $(BINDIR)/sabrinasgame
+all: $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(BINDIR)/sabrinasgame_v4
 
 debug: CXXFLAGS=$(CXXFLAGSDEBUG)
-debug: LDFLAGS=$(LDFLAGSDEBUG)
-debug: $(BINDIR)/sabrinasgame
+debug: $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(BINDIR)/sabrinasgame_v4
 
-info: CXXFLAGS=$(CXXFLAGSINFO)
-info: LDFLAGS=$(LDFLAGSINFO)
-info: $(BINDIR)/sabrinasgame
+$(BINDIR)/sabrinasgame_v1: $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v1.o $(OBJDIR)/utils.o
+	$(CXX) -o $@ $^
 
-$(BINDIR)/sabrinasgame: $(OBJDIR)/main.o $(OBJDIR)/build.o $(OBJDIR)/utils.o
-	$(CXX) -o $@ $^ $(LDFLAGS)
+$(BINDIR)/sabrinasgame_v2: $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v2.o $(OBJDIR)/utils.o
+	$(CXX) -o $@ $^
 
-$(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(OBJDIR)/build.o $(OBJDIR)/utils.o
-	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -c $(SRCDIR)/main.cpp -o $@
+$(BINDIR)/sabrinasgame_v3: $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v3.o $(OBJDIR)/utils.o
+	$(CXX) -o $@ $^
 
-$(OBJDIR)/build.o: $(SRCDIR)/build.cpp $(OBJDIR)/utils.o
-	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -c $(SRCDIR)/build.cpp -o $@
+$(BINDIR)/sabrinasgame_v4: $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v4.o $(OBJDIR)/utils.o
+	$(CXX) -o $@ $^
+
+$(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(OBJDIR)/solution.o $(OBJDIR)/utils.o
+	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/main.cpp -o $@
+
+$(OBJDIR)/solution.o: $(SRCDIR)/solution.cpp $(OBJDIR)/utils.o
+	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/solution.cpp -o $@
+
+$(OBJDIR)/solution_v1.o: $(SRCDIR)/solution_v1.cpp $(OBJDIR)/solution.o
+	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -c $(SRCDIR)/solution_v1.cpp -o $@
+
+$(OBJDIR)/solution_v2.o: $(SRCDIR)/solution_v2.cpp $(OBJDIR)/solution.o
+	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -c $(SRCDIR)/solution_v2.cpp -o $@
+
+$(OBJDIR)/solution_v3.o: $(SRCDIR)/solution_v3.cpp $(OBJDIR)/solution.o
+	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/solution_v3.cpp -o $@
+
+$(OBJDIR)/solution_v4.o: $(SRCDIR)/solution_v4.cpp $(OBJDIR)/solution.o
+	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/solution_v4.cpp -o $@
 
 $(OBJDIR)/utils.o: $(SRCDIR)/utils.cpp
 	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -c $(SRCDIR)/utils.cpp -o $@
@@ -60,4 +76,4 @@ $(OBJDIR)/utils.o: $(SRCDIR)/utils.cpp
 .PHONY: clean
 
 clean:
-	rm -fr core $(BINDIR)/sabrinasgame $(OBJECTS)
+	rm -fr core $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(BINDIR)/sabrinasgame_v4 $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v1.o $(OBJDIR)/solution_v2.o $(OBJDIR)/solution_v3.o $(OBJDIR)/solution_v4.o $(OBJDIR)/utils.o
