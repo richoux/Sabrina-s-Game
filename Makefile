@@ -35,10 +35,10 @@ vpath %.o $(OBJDIR)
 
 # Rules
 
-all: $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3
+all: $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(BINDIR)/sabrinasgame_v4
 
 debug: CXXFLAGS=$(CXXFLAGSDEBUG)
-debug: $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3
+debug: $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(BINDIR)/sabrinasgame_v4
 
 $(BINDIR)/sabrinasgame_v1: $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v1.o $(OBJDIR)/utils.o
 	$(CXX) -o $@ $^
@@ -47,6 +47,9 @@ $(BINDIR)/sabrinasgame_v2: $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solut
 	$(CXX) -o $@ $^
 
 $(BINDIR)/sabrinasgame_v3: $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v3.o $(OBJDIR)/utils.o
+	$(CXX) -o $@ $^
+
+$(BINDIR)/sabrinasgame_v4: $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v4.o $(OBJDIR)/utils.o
 	$(CXX) -o $@ $^
 
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(OBJDIR)/solution.o $(OBJDIR)/utils.o
@@ -64,10 +67,13 @@ $(OBJDIR)/solution_v2.o: $(SRCDIR)/solution_v2.cpp $(OBJDIR)/solution.o
 $(OBJDIR)/solution_v3.o: $(SRCDIR)/solution_v3.cpp $(OBJDIR)/solution.o
 	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/solution_v3.cpp -o $@
 
+$(OBJDIR)/solution_v4.o: $(SRCDIR)/solution_v4.cpp $(OBJDIR)/solution.o
+	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/solution_v4.cpp -o $@
+
 $(OBJDIR)/utils.o: $(SRCDIR)/utils.cpp
 	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -c $(SRCDIR)/utils.cpp -o $@
 
 .PHONY: clean
 
 clean:
-	rm -fr core $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v1.o $(OBJDIR)/solution_v2.o $(OBJDIR)/solution_v3.o $(OBJDIR)/utils.o
+	rm -fr core $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(BINDIR)/sabrinasgame_v4 $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v1.o $(OBJDIR)/solution_v2.o $(OBJDIR)/solution_v3.o $(OBJDIR)/solution_v4.o $(OBJDIR)/utils.o

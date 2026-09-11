@@ -31,7 +31,9 @@ namespace sabrinasgame
 		bool decrease_around( int row1, int col1, int row2, int col2 );
 		bool left_scan_is_even( int col ) const;
 		bool force_move( int row1, int col1, int row2, int col2 );
-		
+
+		inline bool is_free( int row, int col ) { return row >= 0 && row < _height && col >=0 && col < _width && _grid[row][col] > 0; }
+
 	public:
 		Solution( int width, int height );
 

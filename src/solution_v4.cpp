@@ -9,7 +9,6 @@ using sabrinasgame::Solution;
 
 enum Direction{UP, RIGHT, BOTTOM, LEFT};
 
-
 bool Solution::fill( int row, int col )
 {
 #if defined DEBUG
@@ -47,7 +46,13 @@ bool Solution::decrease( int row, int col )
 	else
 	{
 		if( _grid[row][col] == 3 )
-			_list_count2.push_back( coordinates_to_index( row, col ) );
+		{
+			// Only add corner cells
+			if( !( is_free( row+1, col) && is_free( row-1, col) ) && !( is_free( row, col-1) && is_free( row, col+1) ) )
+			{
+				_list_count2.push_back( coordinates_to_index( row, col ) );
+			}
+		}
 		else
 		{
 			if( _grid[row][col] == 2 )
