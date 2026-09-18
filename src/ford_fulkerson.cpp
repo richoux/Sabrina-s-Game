@@ -1,4 +1,6 @@
 #include <iostream>
+#include <algorithm>
+#include <map>
 
 #include "ford_fulkerson.hpp"
 #include "utils.hpp"
@@ -15,36 +17,79 @@ FordFulkerson::FordFulkerson( int width, int height )
 sabrinasgame::Graph FordFulkerson::solve()
 {
 	std::vector<int> path;
-	// int count = 1;
+	int count = 1;
+
+	std::map<int, int> black_cell_visits;
+	for( auto black_cell : _residuals.get_black_cells() )
+		black_cell_visits[black_cell] = 0;
 	
 	while( !_residuals.get_cells_from( _residuals.get_source() ).empty() )
 	{
-		// std::cout << "\nIteration " << count++ << "\n";
+		std::cout << "\nIteration " << count++ << "\n";
 		path.clear();	
+
 		path.push_back( _residuals.get_source() );
 
 		int current = _rng.pick( _residuals.get_cells_from( _residuals.get_source() ) );
 		int next;
+		// int previous_next = -1;
+		// int count_next = 0;
 		path.push_back( current );
-	
+		std::cout << "Current: " << current << "\n";
+		
 		while( current != _residuals.get_sink() )
 		{
-			next = _rng.pick( _residuals.get_cells_from( current ) );
-			path.push_back( next );		
+			const auto& neighbors = _residuals.get_filtered_cells_from( current, path, black_cell_visits );
+			if( std::find( neighbors.begin(), neighbors.end(), _residuals.get_sink() ) != neighbors.end() )
+				next = _residuals.get_sink();
+			else
+				do
+				{
+					next = _rng.pick( neighbors );
+					// if( next == previous_next )
+					// 	++count_next;
+					// else
+					// 	count_next = 0;
+
+					// if( count_next > 5 )
+					// {
+					// 	std::cout << "COMBO BREAKER!!\n";
+					// 	break;
+					// }
+					// previous_next = next;					
+					std::cout << "Next: " << next << "\n";
+				}
+				while( std::find( path.begin(), path.end(), next ) != path.end() && next != _residuals.get_source() ); // next should be a node that is not already in the path, except if it is the source 
+			path.push_back( next );
+
+			if( black_cell_visits.contains(next) )
+				++black_cell_visits[next];
+
+			std::cout << next << " is in the path\n";
 			current = next;
+			// if( count_next > 5 )
+			// 	break;
 		}
 
-		for( int i = 0 ; i < path.size() - 1 ; ++i )
+		std::vector<int> short_path;
+		short_path.push_back( _residuals.get_source() );
+		std::copy( std::find( path.rbegin(), path.rend(), _residuals.get_source() ).base(), path.end(), std::back_inserter( short_path ) );
+
+		for( auto& elem : short_path )
+			std::cout << elem << " ";
+		std::cout << std::endl;
+		
+		for( int i = 0 ; i < short_path.size() - 1 ; ++i )
 		{
-			_flows.remove_edge( path[i+1], path[i] ); // remove if it exists
-			_flows.add_edge( path[i], path[i+1] );
+			_flows.remove_edge( short_path[i+1], short_path[i] ); // remove if it exists
+			_flows.add_edge( short_path[i], short_path[i+1] );
 			
-			_residuals.remove_edge( path[i], path[i+1] );
-			// std::cout << "Remove (" << path[i] << ", " << path[i+1] << ")\n";
-			if( path[i] != _residuals.get_source() )
+			_residuals.remove_edge( short_path[i], short_path[i+1] );
+			std::cout << "Remove (" << short_path[i] << ", " << short_path[i+1] << ")\n";
+			if( short_path[i] != _residuals.get_source() && short_path[i+1] != _residuals.get_sink() )
 			{
-				_residuals.add_edge( path[i+1], path[i] );
-				// std::cout << "Add (" << path[i+1] << ", " << path[i] << ")\n";
+				_residuals.add_edge( short_path[i+1], short_path[i] );
+				std::cout << "Add (" << short_path[i+1] << ", " << short_path[i] << ")\n";
 			}
 		}
 	}

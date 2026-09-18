@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #include "graph.hpp"
 #include "utils.hpp"
@@ -80,6 +81,43 @@ std::vector<std::pair<int,int>> Graph::edges_from_white_cells() const
 	for( auto& white : _white_cells )
 		edges.emplace_back( white, _edges[white].front() );
 	return edges;
+}
+
+std::deque<int> Graph::get_cells_from_excluding( int cell, const std::vector<int>& to_exclude ) const
+{
+	auto edges = _edges[cell];
+	for( int i = 1 ; i < to_exclude.size() ; ++i ) // keep the source
+		std::erase(	edges, to_exclude[i] );
+	return edges;
+}
+
+std::deque<int> Graph::get_filtered_cells_from( int cell,
+                                                const std::vector<int>& to_exclude,
+                                                const std::map<int,int>& visits ) const
+{
+	std::deque<int> returned_edges;
+	auto prefiltered_edges = get_cells_from_excluding( cell, to_exclude );
+	
+	int min_visits = std::numeric_limits<int>::max();
+	for( auto visit : visits )
+		if( std::find( prefiltered_edges.begin(), prefiltered_edges.end(), visit.first ) != prefiltered_edges.end() && visit.second < min_visits )
+			min_visits = visit.second;
+
+	std::cout << "Visits: ";
+	for( auto v : visits )
+		std::cout << "visits[" << v.first << "]=" << v.second << " ";
+	std::cout << std::endl;
+	
+	for( auto edge : prefiltered_edges )
+		if( !visits.contains( edge ) || visits.at(edge) == min_visits ) // accepts "unvisited" cells, like white ones
+			returned_edges.push_back( edge );
+
+	std::cout << "Returned edges from " << cell << ": ";
+	for( auto edge : returned_edges )
+		std::cout << edge << " ";	
+	std::cout << std::endl;
+	
+	return returned_edges;
 }
 
 void Graph::display() const
