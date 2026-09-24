@@ -40,7 +40,7 @@ int main( int argc, char **argv )
 	{
 		sabrinasgame::FordFulkerson ff( w, h );
 		auto flow = ff.solve();
-		display_solution( flow.edges_from_white_cells(), w );
+		display_solution( flow.edges_from_white_nodes(), w );
 		ff.print();
 	}
 	else
@@ -54,7 +54,7 @@ int main( int argc, char **argv )
 			std::cout << "1 | ";
 			if( printable_solution )
 			{
-				auto norm_sol = get_normalized_solution( flow.edges_from_white_cells(), w );
+				auto norm_sol = get_normalized_solution( flow.edges_from_white_nodes(), w );
 				std::cout << norm_sol.str();
 			}
 			else
