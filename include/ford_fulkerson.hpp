@@ -24,6 +24,9 @@ namespace sabrinasgame
 		                             bool is_white,
 		                             const std::vector<int>& path_to_exclude,
 		                             const std::map<int,int>& visits );
+
+		std::vector<int> bfs( const std::vector<int>& path );
+		bool bfs_rec( int node, std::vector<int>& path, std::vector<bool>& visited );
 		
 	public:
 		FordFulkerson( int width, int height );
