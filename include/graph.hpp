@@ -39,10 +39,6 @@ namespace sabrinasgame
 		void add_edge( int node1, int node2 );
 		void remove_edge( int node1, int node2 );
 		std::vector<std::pair<int,int>> edges_from_white_nodes() const;
-		// std::deque<int> get_excluding_neighbors_of( int node, const std::vector<int>& to_exclude ) const;
-		// std::deque<int> get_unvisited_neighbors_of( int node,
-		//                                             const std::vector<int>& to_exclude,
-		//                                             const std::map<int,int>& visits ) const;
 			
 		void display() const;
 	};
