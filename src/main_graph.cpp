@@ -42,9 +42,10 @@ int main( int argc, char **argv )
 	{
 		sabrinasgame::FordFulkerson ff( w, h );
 		auto flow = ff.solve();
-		display_solution( flow.edges_from_white_nodes(), w );
+		auto edges = flow.edges_from_white_nodes();
+		display_solution( edges, w );
 		ff.print();
-		assert( check_solution( flow.edges_from_white_nodes(), w, h ) );			
+		assert( check_solution( edges, w, h ) );			
 	}
 	else
 	{
@@ -53,17 +54,18 @@ int main( int argc, char **argv )
 			std::cout << "Run #" << run << " | ";
 			sabrinasgame::FordFulkerson ff( w, h );
 			auto flow = ff.solve();
+			auto edges = flow.edges_from_white_nodes();
 
 			std::cout << "1 | ";
 			if( printable_solution )
 			{
-				auto norm_sol = get_normalized_solution( flow.edges_from_white_nodes(), w );
+				auto norm_sol = get_normalized_solution( edges, w );
 				std::cout << norm_sol.str();
 			}
 			else
 				std::cout << "\n";
 
-			assert( check_solution( flow.edges_from_white_nodes(), w, h ) );			
+			assert( check_solution( edges, w, h ) );			
 		}
 	}
 
