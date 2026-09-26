@@ -9,5 +9,5 @@ int coord_to_index( int, int, int );
 void display_solution( const std::vector< std::pair<int,int> >& solution, int width );
 void display_solution_short( const std::vector< std::pair<int,int> >& solution );
 long long compute_combinatorics( int w, int h );
-std::stringstream get_normalized_solution( const std::vector< std::pair<int,int> >& solution, int width );
+std::stringstream get_normalized_solution( std::vector< std::pair<int,int> >& solution, int width );
 bool check_solution( const std::vector< std::pair<int,int> >& solution, int width, int height );
