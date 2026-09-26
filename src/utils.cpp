@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cmath>
 #include <set>
+#include <utility>
+
 #include "utils.hpp"
 
 auto compare = [](std::pair<int,int> a, std::pair<int,int> b){ return std::min(a.first, a.second) < std::min(b.first, b.second);};
@@ -43,8 +45,17 @@ void display_solution_short( const std::vector< std::pair<int,int> >& solution )
 	std::cout << "\n";
 }
 
-std::stringstream get_normalized_solution( const std::vector< std::pair<int,int> >& solution, int width )
+std::stringstream get_normalized_solution( std::vector< std::pair<int,int> >& solution, int width )
 {
+	for( auto &s: solution )
+	{
+		auto c1 = index_to_coord( s.first, width );
+		auto c2 = index_to_coord( s.second, width );
+
+		if( c1.first > c2.first || c1.second > c2.second )
+			std::swap( s.first, s.second );
+	}
+
 	std::set<std::pair<int,int>, decltype(compare)> sorted_solution;
 	for( auto &pair_of_index: solution )
 		sorted_solution.insert( pair_of_index );
