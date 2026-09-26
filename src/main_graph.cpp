@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cassert>
+
 #include "ford_fulkerson.hpp"
 #include "graph.hpp"
 #include "utils.hpp"
@@ -42,6 +44,7 @@ int main( int argc, char **argv )
 		auto flow = ff.solve();
 		display_solution( flow.edges_from_white_nodes(), w );
 		ff.print();
+		assert( check_solution( flow.edges_from_white_nodes(), w, h ) );			
 	}
 	else
 	{
@@ -59,6 +62,8 @@ int main( int argc, char **argv )
 			}
 			else
 				std::cout << "\n";
+
+			assert( check_solution( flow.edges_from_white_nodes(), w, h ) );			
 		}
 	}
 

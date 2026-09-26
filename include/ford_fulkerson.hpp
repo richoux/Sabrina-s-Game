@@ -25,8 +25,24 @@ namespace sabrinasgame
 		                             const std::vector<int>& path_to_exclude,
 		                             const std::map<int,int>& visits );
 
+		struct Nodepath
+		{
+			int node;
+			Nodepath *parent;
+
+			Nodepath( int n )
+				: node(n),
+				  parent(nullptr)
+			{ }
+
+			Nodepath( int n, Nodepath *p )
+				: node(n),
+				  parent(p)
+			{ }
+		};
+		
 		std::vector<int> bfs( const std::vector<int>& path );
-		bool bfs_rec( int node, std::vector<int>& path, std::vector<bool>& visited );
+		// bool bfs_rec( int node, std::vector<int>& path, std::vector<bool>& visited );
 		
 	public:
 		FordFulkerson( int width, int height );

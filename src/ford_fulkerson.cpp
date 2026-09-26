@@ -1,6 +1,8 @@
 #include <iostream>
 #include <algorithm>
 #include <map>
+#include <stack>
+#include <deque>
 #include <cassert>
 
 #include "ford_fulkerson.hpp"
@@ -19,16 +21,22 @@ void FordFulkerson::recursive_remove_outgoing_edges( int node, int parent )
 {
 	if( !_residual_outgoing_edges[parent].empty() && node != _residuals.get_sink() )
 	{
-		//std::cout << "Remove " << node << " from the neighbors of " << parent << "\n";
+#if defined DEBUG
+		std::cout << "Remove " << node << " from the neighbors of " << parent << "\n";
+#endif
 		std::erase(	_residual_outgoing_edges[parent], node );
 		
 		if( _residual_outgoing_edges[parent].empty() )
 		{
-			//std::cout << "No neighbors anymore!\n";
+#if defined DEBUG
+			std::cout << "No neighbors anymore!\n";
+#endif
 			for( auto greatparent : _residual_incoming_edges[parent] )
 				recursive_remove_outgoing_edges( parent, greatparent );
 		}
-		//std::cout << "End of recursive call (" << node << ", " << parent << ")\n";
+#if defined DEBUG
+		std::cout << "End of recursive call (" << node << ", " << parent << ")\n";
+#endif
 	}
 }
 
@@ -53,10 +61,14 @@ void FordFulkerson::filtering_neighbors_of( int node,
 				min_visits = visit.second;
 			}
 		
-		//std::cout << "Visits: ";
+#if defined DEBUG
+		std::cout << "Visits: ";
+#endif
 		for( auto v : visits )
 		{
-			//std::cout << "visits[" << v.first << "]=" << v.second << " ";
+#if defined DEBUG
+			std::cout << "visits[" << v.first << "]=" << v.second << " ";
+#endif
 			if( std::find( _residual_outgoing_edges[ node ].begin(),
 			               _residual_outgoing_edges[ node ].end(),
 			               v.first ) != _residual_outgoing_edges[ node ].end()
@@ -66,49 +78,117 @@ void FordFulkerson::filtering_neighbors_of( int node,
 				std::erase(	_residual_incoming_edges[v.first], node );
 			}
 		}
-		//std::cout << std::endl;
+#if defined DEBUG
+		std::cout << std::endl;
+#endif
 	}
 }
 
 std::vector<int> FordFulkerson::bfs( const std::vector<int>& path )
 {
-	int current = path[1];
+	Nodepath *current = new Nodepath( path[1] );
 	
 	std::vector<int> subpath;
-	std::vector<bool> visited( _residuals.get_nb_nodes(), false );
-	if( bfs_rec( current, subpath, visited ) )
-		return subpath;
-
-	return path; // something went wrong
-}
-
-bool FordFulkerson::bfs_rec( int node, std::vector<int>& path, std::vector<bool>& visited )
-{
-	path.push_back( node );
-	visited[node] = true;
+	subpath.push_back( path[0] );
+	subpath.push_back( path[1] );
 	
-	// std::cout << "Recursive call on " << node << " with current path: ";
-	// for( auto elem : path )
-	// 	std::cout << elem << " ";
-	// std::cout << std::endl;
-		
-	if( node == _residuals.get_sink() )
-		return true;
-	else
+	std::vector<bool> visited( _residuals.get_nb_nodes(), false );
+	visited[current->node] = true;
+
+	std::deque<Nodepath*> queue;
+	queue.push_back( current );
+
+	while( !queue.empty() )
 	{
-		bool found = false;
-		for( auto neighbor : _residuals.get_neighbors_of( node ) )
+		current = queue.front();
+		queue.pop_front();
+
+		if( current->node == _residuals.get_sink() )
+		{
+#if defined DEBUG
+			std::cout << "Sink found\n";
+#endif
+			break;
+		}
+
+		for( auto neighbor : _residuals.get_neighbors_of( current->node ) )
 			if( !visited[neighbor] )
-				found = found || bfs_rec( neighbor, path, visited );
-		return found;
+			{
+#if defined DEBUG
+				std::cout << "Visit child " << neighbor << " of " << current->node << "\n";
+#endif
+				Nodepath *next = new Nodepath( neighbor, current );
+				queue.push_back( next );
+				visited[neighbor] = true;			
+			}
 	}
+
+	std::stack<int> stack_path;
+	while( current->node != path[1] )
+	{
+#if defined DEBUG
+				std::cout << "Stacking " << current->node << "\n";
+#endif
+		stack_path.push( current->node );
+		current = current->parent;
+	}
+
+	while( !stack_path.empty() )
+	{
+		int node = stack_path.top();
+#if defined DEBUG
+				std::cout << "Unstacking " << node << "\n";
+#endif
+		subpath.push_back( node );
+		stack_path.pop();
+	}
+	
+	return subpath;
 }
+
+// std::vector<int> FordFulkerson::bfs( const std::vector<int>& path )
+// {
+// 	int current = path[1];
+	
+// 	std::vector<int> subpath;
+// 	std::vector<bool> visited( _residuals.get_nb_nodes(), false );
+// 	if( bfs_rec( current, subpath, visited ) )
+// 		return subpath;
+
+// 	return path; // something went wrong
+// }
+
+// bool FordFulkerson::bfs_rec( int node, std::vector<int>& path, std::vector<bool>& visited )
+// {
+// 	path.push_back( node );
+// 	visited[node] = true;
+	
+// #if defined DEBUG
+// 	std::cout << "Recursive call on " << node << " with current path: ";
+// 	for( auto elem : path )
+// 		std::cout << elem << " ";
+// 	std::cout << std::endl;
+// #endif
+	
+// 	if( node == _residuals.get_sink() )
+// 		return true;
+// 	else
+// 	{
+// 		bool found = false;
+// 		for( auto neighbor : _residuals.get_neighbors_of( node ) )
+// 			if( !visited[neighbor] )
+// 				found = found || bfs_rec( neighbor, path, visited );
+// 		return found;
+// 	}
+// }
 
 sabrinasgame::Graph FordFulkerson::solve()
 {
 	std::vector<int> path;
-	//int count = 1;
-
+#if defined DEBUG
+	int count = 1;
+#endif
+	
 	std::map<int, int> black_node_visits;
 	for( auto black_node : _residuals.get_black_nodes() )
 		black_node_visits[black_node] = 0;
@@ -119,7 +199,9 @@ sabrinasgame::Graph FordFulkerson::solve()
 	
 	while( !_residuals.get_neighbors_of( _residuals.get_source() ).empty() )
 	{
-		//std::cout << "\nIteration " << count++ << "\n";
+#if defined DEBUG
+		std::cout << "\nIteration " << count++ << "\n";
+#endif
 		path.clear();	
 		_residual_outgoing_edges = _residuals.get_outgoing_edges();
 		_residual_incoming_edges = _residuals.get_incoming_edges();
@@ -129,23 +211,31 @@ sabrinasgame::Graph FordFulkerson::solve()
 		int current = _rng.pick( _residual_outgoing_edges[ _residuals.get_source() ] );
 		int next;
 		path.push_back( current );
-		//std::cout << "Current: " << current << "\n";
+#if defined DEBUG
+		std::cout << "Current: " << current << "\n";
+#endif
 		bool switch_to_bfs = false;
 
 		// DFS
 		while( current != _residuals.get_sink() )
 		{
-			//std::cout << "New loop\n";
+#if defined DEBUG
+			std::cout << "New loop\n";
+#endif
 			is_white_node = std::find( white_nodes.begin(),
 			                           white_nodes.end(),
 			                           current ) != white_nodes.end();
-			//std::cout << "Current is " << ( is_white_node ? "white\n" : "black\n" );
+#if defined DEBUG
+			std::cout << "Current is " << ( is_white_node ? "white\n" : "black\n" );
+#endif
 			
 			filtering_neighbors_of( current, is_white_node, path, black_node_visits );
-			// std::cout << "Current " << current << " filtered neighbors: ";
-			// for( auto neighbor: _residual_outgoing_edges[current] )
-			// 	std::cout << neighbor << " ";
-			// std::cout << std::endl;
+#if defined DEBUG
+			std::cout << "Current " << current << " filtered neighbors: ";
+			for( auto neighbor: _residual_outgoing_edges[current] )
+				std::cout << neighbor << " ";
+			std::cout << std::endl;
+#endif
 			if( _residual_outgoing_edges[current].empty() )
 			{
 				switch_to_bfs = true;
@@ -212,21 +302,37 @@ sabrinasgame::Graph FordFulkerson::solve()
 			for( auto parent : _residual_incoming_edges[next] )
 				recursive_remove_outgoing_edges( next, parent );
 			
-			//std::cout << next << " is in the path\n";
+#if defined DEBUG
+			std::cout << next << " is in the path\n";
+#endif
 			current = next;
 		}
 
 		// BFS
 		if( switch_to_bfs )
+		{
+#if defined DEBUG
+			std::cout << "=========\nSWITCH TO BFS\n=========\n";
+#endif
+			int copy_first = path[1];
+			path.clear();	
+			_residual_outgoing_edges = _residuals.get_outgoing_edges();
+			_residual_incoming_edges = _residuals.get_incoming_edges();
+			path.push_back( _residuals.get_source() );
+			path.push_back( copy_first );
+			
 			path = bfs( path );
+		}
 		
 		// std::vector<int> short_path;
 		// short_path.push_back( _residuals.get_source() );
 		// std::copy( std::find( path.rbegin(), path.rend(), _residuals.get_source() ).base(), path.end(), std::back_inserter( short_path ) );
 
-		// for( auto& elem : path )
-		// 	std::cout << elem << " ";
-		// std::cout << std::endl;
+#if defined DEBUG
+		for( auto& elem : path )
+			std::cout << elem << " ";
+		std::cout << std::endl;
+#endif
 		
 		for( int i = 0 ; i < path.size() - 1 ; ++i )
 		{
@@ -234,11 +340,15 @@ sabrinasgame::Graph FordFulkerson::solve()
 			_flows.add_edge( path[i], path[i+1] );
 			
 			_residuals.remove_edge( path[i], path[i+1] );
-			//std::cout << "Remove (" << path[i] << ", " << path[i+1] << ")\n";
+#if defined DEBUG
+			std::cout << "Remove (" << path[i] << ", " << path[i+1] << ")\n";
+#endif
 			if( path[i] != _residuals.get_source() && path[i+1] != _residuals.get_sink() )
 			{
 				_residuals.add_edge( path[i+1], path[i] );
-				//std::cout << "Add (" << path[i+1] << ", " << path[i] << ")\n";
+#if defined DEBUG
+				std::cout << "Add (" << path[i+1] << ", " << path[i] << ")\n";
+#endif
 			}
 		}
 	}

@@ -90,3 +90,36 @@ long long compute_combinatorics( int width, int height )
 
 	return static_cast<long long>( total );
 }
+
+bool check_solution( const std::vector< std::pair<int,int> >& solution, int width, int height )
+{
+	std::set<std::pair<int,int>, decltype(compare)> sorted_solution;
+	for( auto &pair_of_index: solution )
+		sorted_solution.insert( pair_of_index );
+
+	std::vector<bool> checked( width * height, false);
+
+	for( auto &s: sorted_solution )
+	{
+		auto c1 = index_to_coord( s.first, width );
+		auto c2 = index_to_coord( s.second, width );
+
+		if( checked[ s.first ] || checked[ s.second ] )
+		{
+			return false;
+		}
+		else
+		{
+			checked[ s.first ] = true;
+			checked[ s.second ] = true;
+		}
+		
+		if( !( ( c1.first == c2.first && std::abs( c1.second - c2.second ) == 1 )
+		       || ( c1.second == c2.second && std::abs( c1.first - c2.first ) == 1 ) ) )
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
