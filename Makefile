@@ -35,7 +35,7 @@ vpath %.o $(OBJDIR)
 
 # Rules
 
-all: $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(BINDIR)/sabrinasgame_v4 $(BINDIR)/sabrinasgame_ff
+all: $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(BINDIR)/sabrinasgame_v4 $(BINDIR)/sabrinasgame_ff $(BINDIR)/sabrinasgame_ek
 
 debug: CXXFLAGS=$(CXXFLAGSDEBUG)
 debug: $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(BINDIR)/sabrinasgame_v4
@@ -52,14 +52,20 @@ $(BINDIR)/sabrinasgame_v3: $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solut
 $(BINDIR)/sabrinasgame_v4: $(OBJDIR)/main.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v4.o $(OBJDIR)/utils.o
 	$(CXX) -o $@ $^
 
-$(BINDIR)/sabrinasgame_ff: $(OBJDIR)/main_graph.o $(OBJDIR)/graph.o $(OBJDIR)/ford_fulkerson.o $(OBJDIR)/utils.o
+$(BINDIR)/sabrinasgame_ff: $(OBJDIR)/main_graph_ff.o $(OBJDIR)/graph.o $(OBJDIR)/ford_fulkerson.o $(OBJDIR)/utils.o
+	$(CXX) -o $@ $^
+
+$(BINDIR)/sabrinasgame_ek: $(OBJDIR)/main_graph_ek.o $(OBJDIR)/graph.o $(OBJDIR)/edmonds_karp.o $(OBJDIR)/utils.o
 	$(CXX) -o $@ $^
 
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(OBJDIR)/solution.o $(OBJDIR)/utils.o
 	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/main.cpp -o $@
 
-$(OBJDIR)/main_graph.o: $(SRCDIR)/main_graph.cpp $(OBJDIR)/ford_fulkerson.o $(OBJDIR)/graph.o $(OBJDIR)/utils.o
+$(OBJDIR)/main_graph_ff.o: $(SRCDIR)/main_graph.cpp $(OBJDIR)/ford_fulkerson.o $(OBJDIR)/graph.o $(OBJDIR)/utils.o
 	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/main_graph.cpp -o $@
+
+$(OBJDIR)/main_graph_ek.o: $(SRCDIR)/main_graph.cpp $(OBJDIR)/edmonds_karp.o $(OBJDIR)/graph.o $(OBJDIR)/utils.o
+	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -DBFS -c $(SRCDIR)/main_graph.cpp -o $@
 
 $(OBJDIR)/solution.o: $(SRCDIR)/solution.cpp $(OBJDIR)/utils.o
 	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/solution.cpp -o $@
@@ -79,6 +85,9 @@ $(OBJDIR)/solution_v4.o: $(SRCDIR)/solution_v4.cpp $(OBJDIR)/solution.o
 $(OBJDIR)/ford_fulkerson.o: $(SRCDIR)/ford_fulkerson.cpp $(OBJDIR)/graph.o $(OBJDIR)/utils.o
 	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/ford_fulkerson.cpp -o $@
 
+$(OBJDIR)/edmonds_karp.o: $(SRCDIR)/edmonds_karp.cpp $(OBJDIR)/graph.o $(OBJDIR)/utils.o
+	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/edmonds_karp.cpp -o $@
+
 $(OBJDIR)/graph.o: $(SRCDIR)/graph.cpp $(OBJDIR)/utils.o
 	$(CXX) $(CXXFLAGS) -I$(HPPDIR) -Ithirdparty -c $(SRCDIR)/graph.cpp -o $@
 
@@ -88,4 +97,4 @@ $(OBJDIR)/utils.o: $(SRCDIR)/utils.cpp
 .PHONY: clean
 
 clean:
-	rm -fr core $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(BINDIR)/sabrinasgame_v4 $(BINDIR)/sabrinasgame_ff $(OBJDIR)/main.o $(OBJDIR)/main_graph.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v1.o $(OBJDIR)/solution_v2.o $(OBJDIR)/solution_v3.o $(OBJDIR)/solution_v4.o $(OBJDIR)/ford_fulkerson.o $(OBJDIR)/graph.o $(OBJDIR)/utils.o
+	rm -fr core $(BINDIR)/sabrinasgame_v1 $(BINDIR)/sabrinasgame_v2 $(BINDIR)/sabrinasgame_v3 $(BINDIR)/sabrinasgame_v4 $(BINDIR)/sabrinasgame_ff $(BINDIR)/sabrinasgame_ek $(OBJDIR)/main.o $(OBJDIR)/main_graph.o $(OBJDIR)/solution.o $(OBJDIR)/solution_v1.o $(OBJDIR)/solution_v2.o $(OBJDIR)/solution_v3.o $(OBJDIR)/solution_v4.o $(OBJDIR)/ford_fulkerson.o $(OBJDIR)/edmonds_karp.o $(OBJDIR)/graph.o $(OBJDIR)/utils.o

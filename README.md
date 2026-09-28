@@ -1,5 +1,5 @@
 # Sabrina's Game
-Constructive algorithm building valid solutions to Sabrina's Game.
+Constructive algorithms for building valid solutions to Sabrina's Game.
 
 ## Compile (requires a C++20 compiler)
 ```shell
@@ -7,22 +7,22 @@ $> make
 ```
 
 ## Run
-For getting one solution and display it with a pretty ASCII drawing: `$> bin/sabrinasgame_v1 WIDTH HEIGHT`
+For getting one solution and display it with a pretty ASCII drawing: `$> bin/sabrinasgame_ek WIDTH HEIGHT`
 
 Example:
 ```shell
-./bin/sabrinasgame_v1 4 6
+./bin/sabrinasgame_ek 4 6
 ```
 
-For running it multiple times and getting a simple solution display: `$> bin/sabrinasgame_v1 WIDTH HEIGHT RUNS`
+For running it multiple times and getting a simple solution display: `$> bin/sabrinasgame_ek WIDTH HEIGHT RUNS`
 
 Example for 10 runs:
 ```shell
-./bin/sabrinasgame_v1 4 6 10
+./bin/sabrinasgame_ek 4 6 10
 ```
 
 ## Algorithms
-Each algorithm maintains the number of empty adjacent cells for each cell of the grid.
+Each v1~v4 algorithm maintains the number of empty adjacent cells for each cell of the grid.
 
 ### v1
 Fill cells from top-left to bottom-right, placing a random tile (horizontally or vertically) and forcing a tile if one cell has only one empty adjacent cell.
@@ -36,6 +36,12 @@ Randomly select a cell with 1 (in priority) or 2 empty adjacent cells, then plac
 ### v4
 Same as v3, but selecting corner cells only, for the ones with 2 empty adjacent cells. Corner cells are the ones forming a triangular shape with their two empty adjacent cells.
 
+### ff
+This version implements a randomized Ford-Fulkerson algorithm, mainly using Depth-First Search before switching to Breadth-First Search (BFS) if it is stuck into a dead end in the graph modeling the grid.
+
+### ek
+This version implements a randomized Edmonds-Karp algorithm, a variant of the Ford-Fulkerson algorithm where the path selection is done by BFS. BFS is here randomized by shuffling the current node's children before visiting them. We recommand using this version.
 
 ## Known issues
-The algorithms are not perfect yet. In some rare case, the greedy construction takes a path where no solutions exist. On large instance (with 300 cells and more), some algorithms do not terminate.
+Algorithms v1~v4 are not perfect. In some rare case, the greedy construction takes a path where no solutions exist. On large instance (with 300 cells and more), some algorithms do not terminate.
+Both the Ford-Fulkerson and the Edmonds-Karp version are uniformly random, polynomial-time algorithms, working on any instance size.

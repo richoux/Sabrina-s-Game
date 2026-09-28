@@ -1,7 +1,12 @@
 #include <iostream>
 #include <cassert>
 
+#if defined BFS
+#include "edmonds_karp.hpp"
+#else
 #include "ford_fulkerson.hpp"
+#endif
+
 #include "graph.hpp"
 #include "utils.hpp"
 
@@ -40,7 +45,11 @@ int main( int argc, char **argv )
 		
 	if( xp == 1 )
 	{
+#if defined BFS
+		sabrinasgame::EdmondsKarp ff( w, h );
+#else
 		sabrinasgame::FordFulkerson ff( w, h );
+#endif
 		auto flow = ff.solve();
 		auto edges = flow.edges_from_white_nodes();
 		display_solution( edges, w );
@@ -52,7 +61,11 @@ int main( int argc, char **argv )
 		for( int run = 1 ; run <= xp ; ++run )
 		{
 			std::cout << "Run #" << run << " | ";
+#if defined BFS
+			sabrinasgame::EdmondsKarp ff( w, h );
+#else
 			sabrinasgame::FordFulkerson ff( w, h );
+#endif
 			auto flow = ff.solve();
 			auto edges = flow.edges_from_white_nodes();
 
