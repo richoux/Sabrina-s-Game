@@ -37,7 +37,7 @@ int main( int argc, char **argv )
 		return EXIT_FAILURE;
 	}
 
-	bool printable_solution = ( w * h < 100 );
+	bool printable_solution = ( w * h < 1000 );
 	
 	long long number_solutions = compute_combinatorics(w,h);
 	std::cout << "Number of valid solutions for a (" << w << "x" << h << ") rectangle: " << number_solutions << "\n";
