@@ -63,6 +63,9 @@ int main( int argc, char **argv )
 #endif
 		for( int run = 1 ; run <= xp ; ++run )
 		{
+			if( run % 10000 == 0 )
+				std::cerr << run << "\n";
+			
 			std::cout << "Run #" << run << " | ";
 #if defined BFS
 			sabrinasgame::EdmondsKarp ff( w, h );
