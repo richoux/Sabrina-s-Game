@@ -67,8 +67,8 @@ int main( int argc, char **argv )
 					auto norm_sol = get_normalized_solution( result, w );
 					std::cout << norm_sol.str();
 				}
-				else
-					std::cout << "\n";
+			
+				std::cout << "\n";
 			}
 			else
 			{

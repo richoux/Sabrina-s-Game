@@ -80,7 +80,6 @@ std::stringstream get_normalized_solution( std::vector< std::pair<int,int> >& so
 			else
 				normalized_solution << -index_plus_one; // vertical
 	}
-	normalized_solution << "\n";
 	return normalized_solution;
 }
 
