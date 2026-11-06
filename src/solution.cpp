@@ -8,7 +8,7 @@ using sabrinasgame::Solution;
 Solution::Solution( int width, int height )
 	: _width(width),
 		_height(height),
-		_grid(std::vector<std::vector<int>>(height))
+	  _grid(std::vector<std::vector<int>>(height))
 {
 	for( int h = 0 ; h < _height ; ++h )
 		_grid[ h ] = std::vector<int>( _width );

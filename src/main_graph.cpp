@@ -58,6 +58,9 @@ int main( int argc, char **argv )
 	}
 	else
 	{
+#if defined BFS
+		std::cout << "Run | Status | Normalized solution (if not too long) | Number of solver iterations | Runtime in ms | Memory usage in kb\n";
+#endif
 		for( int run = 1 ; run <= xp ; ++run )
 		{
 			std::cout << "Run #" << run << " | ";
@@ -75,9 +78,16 @@ int main( int argc, char **argv )
 				auto norm_sol = get_normalized_solution( edges, w );
 				std::cout << norm_sol.str();
 			}
-			else
-				std::cout << "\n";
 
+#if defined BFS
+			// Runtimes in ms, memory usage in kb
+			std::cout << " | " << ff.get_number_iterations()
+			          << " | " << ff.get_runtime()
+			          << " | " << ff.get_memory_usage() << "\n";
+#else
+			std::cout << "\n";
+#endif
+			
 			assert( check_solution( edges, w, h ) );			
 		}
 	}

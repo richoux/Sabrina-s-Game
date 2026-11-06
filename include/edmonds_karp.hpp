@@ -18,6 +18,11 @@ namespace sabrinasgame
 		
 		randutils::mt19937_rng _rng;
 
+		// Statistics
+		unsigned long _number_iterations;
+		unsigned long _memory_usage;
+		double _runtime;
+
 		void recursive_remove_outgoing_edges( int node, int parent );
 
 		void filtering_neighbors_of( int node,
@@ -47,5 +52,9 @@ namespace sabrinasgame
 		EdmondsKarp( int width, int height );
 		Graph solve();
 		void print() const;
+
+		inline unsigned int get_number_iterations() const { return _number_iterations; }
+		inline unsigned int get_memory_usage() const { return _memory_usage; }
+		inline double get_runtime() const { return _runtime; }
 	};
 }

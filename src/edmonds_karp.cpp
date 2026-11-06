@@ -4,9 +4,52 @@
 #include <stack>
 #include <deque>
 #include <cassert>
+#include <chrono>
 
 #include "edmonds_karp.hpp"
 #include "utils.hpp"
+
+/***************
+ ** From https://stackoverflow.com/questions/63166/how-to-determine-cpu-and-memory-consumption-from-inside-a-process
+ ***************/
+// For memory usage stats
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+
+unsigned long parseLine( char* line )
+{
+	unsigned long value;
+	// This assumes that a digit will be found and the line ends in " Kb".
+	int i = strlen( line );
+	const char* p = line;
+	while( *p <'0' || *p > '9' )
+		p++;
+	line[ i-3 ] = '\0';
+	char* end = nullptr;
+	value = strtoul( p, &end, 10 );
+	return value;
+}
+
+unsigned long get_usage()
+{
+	FILE* file = fopen("/proc/self/status", "r");
+	unsigned long result = 0;
+	char line[128];
+	
+	while( fgets( line, 128, file ) != NULL )
+	{
+		if( strncmp( line, "VmSize:", 7 ) == 0 )
+		{
+			result = parseLine( line );
+			break;
+		}
+	}
+	fclose( file );
+	// Note: this value is in KB!
+	return result;
+}
+/**********************/
 
 using sabrinasgame::EdmondsKarp;
 
@@ -14,7 +57,10 @@ EdmondsKarp::EdmondsKarp( int width, int height )
 	: _width(width),
 	  _height(height),
 	  _residuals(Graph(width,height)),
-	  _flows(Graph(width,height,true))
+	  _flows(Graph(width,height,true)),
+	  _number_iterations(0),
+	  _memory_usage(0),
+	  _runtime(0.)
 { }
 
 void EdmondsKarp::recursive_remove_outgoing_edges( int node, int parent )
@@ -152,10 +198,10 @@ std::vector<int> EdmondsKarp::random_bfs( const std::vector<int>& path )
 
 sabrinasgame::Graph EdmondsKarp::solve()
 {
+	std::chrono::time_point<std::chrono::steady_clock> start_wall_clock( std::chrono::steady_clock::now() );
+	std::chrono::duration<double,std::micro> elapsed_time( 0 );
+
 	std::vector<int> path;
-#if defined DEBUG
-	int count = 1;
-#endif
 	
 	std::map<int, int> black_node_visits;
 	for( auto black_node : _residuals.get_black_nodes() )
@@ -166,8 +212,10 @@ sabrinasgame::Graph EdmondsKarp::solve()
 	
 	while( !_residuals.get_neighbors_of( _residuals.get_source() ).empty() )
 	{
+		++_number_iterations;
+		
 #if defined DEBUG
-		std::cout << "\nIteration " << count++ << "\n";
+		std::cout << "\nIteration " << _number_iterations << "\n";
 #endif
 		path.clear();	
 		_residual_outgoing_edges = _residuals.get_outgoing_edges();
@@ -207,6 +255,10 @@ sabrinasgame::Graph EdmondsKarp::solve()
 			}
 		}		
 	}
+
+	elapsed_time = std::chrono::steady_clock::now() - start_wall_clock;
+	_runtime = elapsed_time.count();
+	_memory_usage = get_usage();
 	
 	return _flows;
 }

@@ -20,9 +20,9 @@ namespace sabrinasgame
 
 		std::vector< std::pair<int,int> > _built_solution;
 		bool _is_valid;
-		
-		randutils::mt19937_rng _rng;
 
+		randutils::mt19937_rng _rng;
+		
 		bool toss_coin();		
 		void init_grid();
 		bool fill( int row, int col );
@@ -40,7 +40,6 @@ namespace sabrinasgame
 		std::vector< std::pair<int,int> > build();
 		void print() const;
 		inline bool is_valid() const { return _is_valid; }
-
 		
 		std::pair<int,int> index_to_coordinates( int index ) const;
 		int coordinates_to_index( int, int ) const;
