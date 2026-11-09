@@ -23,13 +23,6 @@ namespace sabrinasgame
 		unsigned long _memory_usage;
 		double _runtime;
 
-		void recursive_remove_outgoing_edges( int node, int parent );
-
-		void filtering_neighbors_of( int node,
-		                             bool is_white,
-		                             const std::vector<int>& path_to_exclude,
-		                             const std::map<int,int>& visits );
-
 		struct Nodepath
 		{
 			int node;

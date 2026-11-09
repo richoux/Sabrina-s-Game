@@ -63,73 +63,6 @@ EdmondsKarp::EdmondsKarp( int width, int height )
 	  _runtime(0.)
 { }
 
-void EdmondsKarp::recursive_remove_outgoing_edges( int node, int parent )
-{
-	if( !_residual_outgoing_edges[parent].empty() && node != _residuals.get_sink() )
-	{
-#if defined DEBUG
-		std::cout << "Remove " << node << " from the neighbors of " << parent << "\n";
-#endif
-		std::erase(	_residual_outgoing_edges[parent], node );
-		
-		if( _residual_outgoing_edges[parent].empty() )
-		{
-#if defined DEBUG
-			std::cout << "No neighbors anymore!\n";
-#endif
-			for( auto greatparent : _residual_incoming_edges[parent] )
-				recursive_remove_outgoing_edges( parent, greatparent );
-		}
-#if defined DEBUG
-		std::cout << "End of recursive call (" << node << ", " << parent << ")\n";
-#endif
-	}
-}
-
-void EdmondsKarp::filtering_neighbors_of( int node,
-                                          bool is_white,
-                                          const std::vector<int>& path_to_exclude,
-                                          const std::map<int,int>& visits )
-{
-	for( int i = 1 ; i < path_to_exclude.size() ; ++i ) // keep the source
-	{
-		std::erase(	_residual_outgoing_edges[node], path_to_exclude[i] );
-		std::erase(	_residual_incoming_edges[path_to_exclude[i]], node );
-	}
-
-	if( is_white )
-	{
-		int min_visits = std::numeric_limits<int>::max();
-		for( auto visit : visits )
-			if( std::find( _residual_outgoing_edges[node].begin(), _residual_outgoing_edges[node].end(), visit.first ) != _residual_outgoing_edges[node].end()
-			    && visit.second < min_visits )
-			{
-				min_visits = visit.second;
-			}
-		
-#if defined DEBUG
-		std::cout << "Visits: ";
-#endif
-		for( auto v : visits )
-		{
-#if defined DEBUG
-			std::cout << "visits[" << v.first << "]=" << v.second << " ";
-#endif
-			if( std::find( _residual_outgoing_edges[ node ].begin(),
-			               _residual_outgoing_edges[ node ].end(),
-			               v.first ) != _residual_outgoing_edges[ node ].end()
-			    && v.second > min_visits )
-			{
-				std::erase(	_residual_outgoing_edges[node], v.first );
-				std::erase(	_residual_incoming_edges[v.first], node );
-			}
-		}
-#if defined DEBUG
-		std::cout << std::endl;
-#endif
-	}
-}
-
 std::vector<int> EdmondsKarp::random_bfs( const std::vector<int>& path )
 {
 	Nodepath *current = new Nodepath( path[1] );
@@ -194,7 +127,6 @@ std::vector<int> EdmondsKarp::random_bfs( const std::vector<int>& path )
 	
 	return subpath;
 }
-
 
 sabrinasgame::Graph EdmondsKarp::solve()
 {
