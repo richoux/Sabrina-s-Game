@@ -1,0 +1,6 @@
+Total number of solutions: 1000000
+Number of valid solutions: 1000000
+Number of different valid solutions: 6728
+Number of iterations: 18
+Mean runtime (in microseconds): 94.38
+Memory usage (in kb): 8036
